@@ -72,8 +72,7 @@ namespace Full_GRASP_And_SOLID
 
             return result;
         }
-
-        // Agregado: obtener tiempo de la receta
+        
         public int GetCookTime()
         {
             int total = 0;
