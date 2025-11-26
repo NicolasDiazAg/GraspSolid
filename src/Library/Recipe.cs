@@ -9,10 +9,20 @@ using System.Collections.Generic;
 
 namespace Full_GRASP_And_SOLID
 {
-    public class Recipe : IRecipe
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+
+    public class Recipe : IRecipeContent // Modificado por DIP
     {
         // Cambiado por OCP
         private IList<BaseStep> steps = new List<BaseStep>();
+        private bool cooked = false;
+        public bool Cooked // en este caso usamos esta propiedad solo de lectura con su get.
+        {
+            get { return cooked; }
+        }
+
 
         public Product FinalProduct { get; set; }
 
@@ -61,6 +71,36 @@ namespace Full_GRASP_And_SOLID
             }
 
             return result;
+        }
+
+        // Agregado: obtener tiempo de la receta
+        public int GetCookTime()
+        {
+            int total = 0;
+            foreach (var step in this.steps)
+            {
+                total += step.Time;
+            }
+
+            return total;
+        }
+
+        public void Cook()
+        {
+            if (cooked) return;
+
+            int time = this.GetCookTime();
+            this.timer = new CountdownTimer();
+            this.timer.Register(time, new TimerClientAdapter(this));
+        }
+        
+
+        private CountdownTimer timer; // en este caso, el timer funcionaria como un observer en recipe.
+
+        // se uso internal por conveccion del patrón adapter.
+        internal void OnCooked()
+        {
+            cooked = true;
         }
     }
 }
